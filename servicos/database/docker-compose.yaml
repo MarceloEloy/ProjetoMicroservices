@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    container_name: microprojeto
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_MULTIPLE_DATABASES: microclientes, micropedidos, microprodutos
+    ports:
+      - "5555:5432"
+    volumes:
+      - ./:/var/lib/postgresql/data
