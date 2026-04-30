@@ -19,7 +19,7 @@ public class ProdutoController {
     }
 
     @GetMapping(path = "/get/{codigo}")
-    public ResponseEntity<Produto> procurarPorCodigo(@RequestParam Long codigo){
+    public ResponseEntity<Produto> procurarPorCodigo(@PathVariable Long codigo){
         return produtoService.
                 obterPorCodigo(codigo).
                     map(ResponseEntity::ok).

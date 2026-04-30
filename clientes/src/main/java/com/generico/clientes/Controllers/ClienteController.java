@@ -19,7 +19,7 @@ public class ClienteController {
     }
 
     @GetMapping(path = "/get/{codigo}")
-    public ResponseEntity<Cliente> getByCodigo(@RequestParam Long codigo){
+    public ResponseEntity<Cliente> getByCodigo(@PathVariable Long codigo){
         return clienteService
                 .getByCodigo(codigo)
                     .map(ResponseEntity::ok)
