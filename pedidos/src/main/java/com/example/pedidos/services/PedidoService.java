@@ -35,6 +35,7 @@ public class PedidoService {
 
     @Transactional
     public Pedido criar(Pedido pedido){
+        validator.validar(pedido);
         realizarPersistencia(pedido);
         enviarSolicitacaoPagamento(pedido);
         return pedido;

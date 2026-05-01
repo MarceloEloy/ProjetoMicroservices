@@ -2,7 +2,9 @@ package com.example.pedidos.controller;
 
 import com.example.pedidos.controller.mapper.PedidoMapper;
 import com.example.pedidos.model.DTOs.PedidoDTO;
+import com.example.pedidos.model.ErroResposta;
 import com.example.pedidos.model.Pedido;
+import com.example.pedidos.model.exception.ValidationException;
 import com.example.pedidos.services.PedidoService;
 import com.example.pedidos.validator.Validator;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +24,21 @@ public class PedidoController {
     private PedidoMapper pedidoMapper;
 
     @PostMapping(path = "/post")
-    public ResponseEntity<Pedido> addPedido(@RequestBody PedidoDTO.NovoPedidoDto dto){
-        System.out.println(dto.dadosPagamento().dados() + " " + dto.dadosPagamento().pagamento());
-        var pedido = pedidoMapper.map(dto);
+    public ResponseEntity<Object> addPedido(@RequestBody PedidoDTO.NovoPedidoDto dto){
+        try {
 
-        return ResponseEntity.ok(pedidoService.criar(pedido));
+            var pedido = pedidoMapper.map(dto);
+            var novoPedido = pedidoService.criar(pedido);
+            return ResponseEntity.ok(novoPedido);
+        }catch (ValidationException e){
+
+            var erro = new ErroResposta("Erro validação", e.getField(), e.getMessage());
+            return ResponseEntity.badRequest().body(erro);
+
+        }
+
+
+
     }
 
     @GetMapping(path = "/get/{codigo}")
