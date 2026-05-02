@@ -1,9 +1,11 @@
 package com.example.pedidos.controller;
 
 import com.example.pedidos.controller.mapper.PedidoMapper;
+import com.example.pedidos.model.DTOs.NovoPagamentoDTO;
 import com.example.pedidos.model.DTOs.PedidoDTO;
 import com.example.pedidos.model.ErroResposta;
 import com.example.pedidos.model.Pedido;
+import com.example.pedidos.model.exception.ItemNaoEncontradoException;
 import com.example.pedidos.model.exception.ValidationException;
 import com.example.pedidos.services.PedidoService;
 import com.example.pedidos.validator.Validator;
@@ -40,6 +42,21 @@ public class PedidoController {
 
 
     }
+
+    @PutMapping(path = "/put/pagamentos")
+    public ResponseEntity<Object> adicionarNovoPagamento(@RequestBody NovoPagamentoDTO dto){
+
+        try {
+            pedidoService.adicionarNovoPagamento(dto.codigoPedido(), dto.dadosCartao(), dto.tipo());
+
+        } catch (ItemNaoEncontradoException e) {
+            var erro = new ErroResposta("item não encontrado", "codigo pedido", e.getMessage());
+            return ResponseEntity.badRequest().body(erro);
+        }
+
+      return ResponseEntity.noContent().build();
+
+    };
 
     @GetMapping(path = "/get/{codigo}")
     public ResponseEntity<Pedido> buscarPorCodigo(@PathVariable Long codigo){
