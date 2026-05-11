@@ -1,5 +1,6 @@
 package com.example.pedidos.model;
 
+import com.example.pedidos.client.representation.ClienteRepresentation;
 import com.example.pedidos.model.DTOs.PedidoDTO;
 import com.example.pedidos.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -52,6 +53,10 @@ public class Pedido {
 
     @Transient
     private DadosPagamento dadosPagamento;
+
+    @Transient
+    private ClienteRepresentation dadosCliente;
+
 
     @OneToMany(mappedBy = "pedido")
     @JsonBackReference

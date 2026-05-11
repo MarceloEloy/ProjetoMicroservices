@@ -1,5 +1,7 @@
 package com.example.pedidos.services;
 
+import com.example.pedidos.client.ClienteClient;
+import com.example.pedidos.client.ProdutoClient;
 import com.example.pedidos.client.ServicoBancarioClient;
 import com.example.pedidos.controller.mapper.PedidoMapper;
 import com.example.pedidos.model.DTOs.PedidoDTO;
@@ -9,6 +11,7 @@ import com.example.pedidos.model.Pedido;
 import com.example.pedidos.model.enums.Status;
 import com.example.pedidos.model.enums.TipoPagamento;
 import com.example.pedidos.model.exception.ItemNaoEncontradoException;
+import com.example.pedidos.publisher.PagamentoPublisher;
 import com.example.pedidos.repository.ItemPedidoRepository;
 import com.example.pedidos.repository.PedidoRepository;
 import com.example.pedidos.validator.Validator;
@@ -18,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Log4j2
@@ -40,7 +44,16 @@ public class PedidoService {
     private Validator validator;
 
     @Autowired
+    private ClienteClient clienteClient;
+
+    @Autowired
+    private ProdutoClient produtoClient;
+
+    @Autowired
     private ServicoBancarioClient client;
+
+    @Autowired
+    private PagamentoPublisher pagamentoPublisher;
 
     public void atualizaStatusPagamento(Long codigoPedido, String chavePagamento, boolean status, String observacoes){
 
@@ -56,6 +69,9 @@ public class PedidoService {
 
         if (status){
             pedido.setStatus(Status.PAGO);
+            carregarDadosCliente(pedido);
+            carregarItensPedido(pedido);
+            pagamentoPublisher.publicar(pedido);
         }
         else {
             pedido.setStatus(Status.ERRO_PAGAMENTO);
@@ -127,5 +143,35 @@ public class PedidoService {
         pedidoRepository.save(pedido);
 
     };
+
+
+    public Optional<Pedido> carregarDadosCompletosPedido(Long codigo){
+
+        Optional<Pedido> pedido = pedidoRepository.findById(codigo);
+        pedido.ifPresent(this::carregarDadosCliente);
+        pedido.ifPresent(this::carregarItensPedido);
+
+        return pedido;
+    };
+
+    private void carregarDadosCliente(Pedido pedido){
+        Long codigoCLiente = pedido.getCodigoCliente();
+        var response = clienteClient.obterDados(codigoCLiente);
+        pedido.setDadosCliente(response.getBody());
+    };
+
+    private void carregarItensPedido(Pedido pedido){
+        List<ItemPedido> itensPedido = itemPedidoRepository.findByPedido(pedido);
+        pedido.setItens(itensPedido);
+        pedido.getItens().forEach(this::carregarDadosProduto);
+    };
+
+    private void carregarDadosProduto(ItemPedido itemPedido){
+
+        Long codigoProduto = itemPedido.getCodigoProduto();
+        var response = produtoClient.obterPorCodigo(codigoProduto);
+        itemPedido.setNome(response.getBody().nome());
+
+    }
 
 }

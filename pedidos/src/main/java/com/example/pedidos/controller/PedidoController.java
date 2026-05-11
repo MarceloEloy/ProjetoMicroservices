@@ -7,6 +7,8 @@ import com.example.pedidos.model.ErroResposta;
 import com.example.pedidos.model.Pedido;
 import com.example.pedidos.model.exception.ItemNaoEncontradoException;
 import com.example.pedidos.model.exception.ValidationException;
+import com.example.pedidos.publisher.DetalhePedidoRepresentation;
+import com.example.pedidos.publisher.DetalhesPedidoMapper;
 import com.example.pedidos.services.PedidoService;
 import com.example.pedidos.validator.Validator;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,9 @@ public class PedidoController {
 
     @Autowired
     private PedidoMapper pedidoMapper;
+
+    @Autowired
+    private DetalhesPedidoMapper detalhesPedidoMapper;
 
     @PostMapping(path = "/post")
     public ResponseEntity<Object> addPedido(@RequestBody PedidoDTO.NovoPedidoDto dto){
@@ -59,8 +64,14 @@ public class PedidoController {
     };
 
     @GetMapping(path = "/get/{codigo}")
-    public ResponseEntity<Pedido> buscarPorCodigo(@PathVariable Long codigo){
-        return pedidoService.buscarPorCodigo(codigo);
+    public ResponseEntity<DetalhePedidoRepresentation> obterDetalhesPedido(@PathVariable Long codigo){
+        return pedidoService.carregarDadosCompletosPedido(codigo).
+                map(detalhesPedidoMapper::map)
+                .map(ResponseEntity::ok).
+                orElseGet(() -> {
+                   return ResponseEntity.notFound().build();
+                })
+                ;
 
     }
 
