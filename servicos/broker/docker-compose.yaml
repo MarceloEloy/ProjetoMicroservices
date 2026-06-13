@@ -7,11 +7,15 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
+    restart: unless-stopped
+
     ports:
       - "22181:2181"
 
   kafka:
     image: confluentinc/cp-kafka:7.7.8
+
+    restart: unless-stopped
 
     depends_on:
       - zookeeper

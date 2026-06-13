@@ -36,7 +36,7 @@ public class PagamentoPublisher {
             kafkaTemplate.send(topico, "dados", json);
         }catch (RuntimeException e){
 
-            log.error("Erro ao processar o Json");
+            log.error("Erro ao processar o Json " + e.getMessage());
 
         }
 
