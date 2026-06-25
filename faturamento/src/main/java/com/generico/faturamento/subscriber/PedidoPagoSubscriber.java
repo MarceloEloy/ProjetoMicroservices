@@ -24,6 +24,7 @@ public class PedidoPagoSubscriber {
 
     @KafkaListener(groupId = "icompras-faturamento", topics = "${icompras.config.kafka.topics.pedidos-pagos}")
     public void Listen(String json){
+        System.out.println(json);
 
         try {
             log.info("Recebendo pedido para faturamento: {}", json);

@@ -18,7 +18,7 @@ public record DetalhePedidoRepresentation(
         String dataPedido,
         BigDecimal total,
         Status status,
-        List<DetalhePedidoRepresentation> itens
+        List<DetalheItemPedidoRepresentation> itens
 
 ) {
 }

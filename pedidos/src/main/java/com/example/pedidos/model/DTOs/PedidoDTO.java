@@ -39,7 +39,9 @@ public class PedidoDTO {
 
             List<BaseItemPedidoDTO> itens,
 
-            BaseDadosPagamentoDTO dadosPagamento
+            BaseDadosPagamentoDTO dadosPagamento,
+
+            String observacoes
 
     ){
 
