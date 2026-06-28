@@ -1,13 +1,12 @@
 package com.generico.faturamento.subscriber;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.generico.faturamento.GeradorNotaFiscalService;
+import com.generico.faturamento.service.GeradorNotaFiscalService;
 import com.generico.faturamento.mapper.PedidoMapper;
 import com.generico.faturamento.model.Pedido;
 import com.generico.faturamento.subscriber.representation.DetalhePedidoRepresentation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 

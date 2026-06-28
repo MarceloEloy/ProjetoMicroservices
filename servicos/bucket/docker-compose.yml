@@ -7,7 +7,7 @@ services:
     volumes:
       - ./docs:/data
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin123
+      MINIO_ROOT_USER: ${CHAVE_MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${CHAVE_MINIO_SECRET}
     command: server /data --console-address ":9001"
     restart: unless-stopped

@@ -55,6 +55,25 @@ public class PedidoService {
     @Autowired
     private PagamentoPublisher pagamentoPublisher;
 
+    @Transactional
+    public void atualizarPedidoFaturado(Long codigo, String urlNotaFiscal){
+        Pedido pedido = pedidoRepository.findById(codigo).get();
+        log.info("atualizandoPedidoFaturado");
+        pedido.setUrlNf(urlNotaFiscal);
+        pedido.setStatus(Status.FATURADO);
+
+    }
+
+    @Transactional
+    public void atualizarPedidoEnviado(Long codigo, String codigoRastreio){
+        Pedido pedido = pedidoRepository.findById(codigo).get();
+        log.info("atualizandoPedidoEnviado");
+        pedido.setCodigoRastreio(codigoRastreio);
+        pedido.setStatus(Status.ENVIADO);
+
+    }
+
+    @Transactional
     public void atualizaStatusPagamento(Long codigoPedido, String chavePagamento, boolean status, String observacoes){
 
         var pedidoEnviado = pedidoRepository.findByCodigoAndChavePagamento(codigoPedido, chavePagamento);
